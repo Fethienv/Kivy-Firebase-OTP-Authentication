@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Send phone OTP request</title>
+    <style>
+    .cc{
+        position: fixed;
+        width: 305px;
+        height: 80px;
+        top: 50%;
+        left: 50%;
+        margin-top: -38px; /* Negative half of height. */
+        margin-left: -150px; /* Negative half of width. */
+    }
+    </style>
+  </head>
+  <body>
+    <div class="cc" id="recaptcha-container_id" style="border:1px"></div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+      
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-app.js"></script>
+
+    <!-- If you enabled Analytics in your project, add the Firebase SDK for Analytics -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-analytics.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-firestore.js"></script>
+
+    <script>
+        
+        var firebaseConfig = {
+		    apiKey: "AIzaSyDdT5CKe4ISB91z7R4uWuREoMVWhtBzfgI",  // note
+		    authDomain: "sahari-18615.firebaseapp.com",
+		    databaseURL: "https://sahari-18615.firebaseio.com",
+		    projectId: "sahari-18615",
+		    storageBucket: "sahari-18615.appspot.com",
+		    messagingSenderId: "576094375251",
+		    appId: "1:576094375251:web:0a8508470c41ab3e7965a6",
+		    measurementId: "G-YVDG2TW324"
+	    };
+
+        // Initialize Firebase
+	    firebase.initializeApp(firebaseConfig);
+	    firebase.analytics();
+  
+        window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container_id', {
+			'size': 'visible',
+            'callback': function(response) {
+                // reCAPTCHA solved, allow signInWithPhoneNumber.
+                Recaptchatoken_handler(response, js_Recaptcharesponse_callback);
+            }
+        });
+        
+        // render the rapchaVerifier.
+        var Visibility_state = "hidden"
+	    window.recaptchaVerifier.render().then(function (widgetId) {
+	        window.recaptchaWidgetId = widgetId;
+
+            var observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutationRecord) {
+                    Visibility  = mutationRecord.target.style["visibility"]
+                    Visibility_state = Visibility
+                    RecaptchaChallenge_handler(Visibility_state, js_Recaptcharesponse_callback);
+                });    
+            });
+            document.body.addEventListener("click", function (evt) {
+                var target_div = document.getElementsByTagName("div")[4];
+                observer.observe(target_div, { attributes : true, attributeFilter : ['style'] });    
+            });  
+
+        });
+
+        function js_Recaptcharesponse_callback(value, py_Recaptcharesponse_callback) {
+            //py_Recaptcharesponse_callback(value);
+        }
+        
+    </script>
+  </body> 
+</html>

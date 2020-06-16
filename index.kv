@@ -1,0 +1,276 @@
+#:kivy 1.11.1
+#:import utils kivy.utils
+
+# ScreenManager object
+ScreenManager:
+    SendOTPScreen:
+        id  : SendOTPScreen
+    VerifyOTPScreen:
+        id  : VerifyOTPScreen
+
+
+<OverPopup>:
+    id  : OverPopup
+    auto_dismiss: False
+    pos_hint:{"center_x":0.5, "center_y":0.5}
+    size_hint:[None, None]
+    size: (380,180)
+
+    BoxLayout:
+        size_hint:[None, None]
+        size: (380,180)
+        orientation:"vertical"
+        BoxLayout:
+            size_hint:[None, None]
+            size: (380,50)
+            canvas:
+                Color:
+                    rgba: utils.get_color_from_hex("#6610f2")
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text:"Recaptcha"
+        BoxLayout:
+            id  : CEFBrowser    
+            size_hint:[None, None]
+            size: (380,80)
+            canvas:
+                Color:
+                    rgba: utils.get_color_from_hex("#FFFFFF")
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text:"recaptcha loading ... Please wait"
+                color: utils.get_color_from_hex("#000000")
+
+
+        BoxLayout:
+            size_hint:[None, None]
+            size: (380,50)
+            Button:
+                id: send_otp_code
+                pos: self.pos
+                size: self.size
+                text:"Cancel"
+                on_release: root.dismiss()
+
+<SendOTPScreen>:
+    name: "SendOTP"
+
+    
+    
+    LoginCardLayer:
+        id: LoginCard
+        pos_hint:{"center_x":0.5, "center_y":0.5}
+        size_hint:[None, None]
+        width:400
+        height:340
+
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint:LoginCard.pos_hint
+        size_hint:LoginCard.size_hint
+        width:LoginCard.width
+        height:LoginCard.height
+
+        # Header
+        BoxLayout:
+            size_hint:[None, None]
+            width:LoginCard.width
+            height: 50
+            canvas:
+                Color:
+                    rgba: utils.get_color_from_hex("#6610f2")
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text:"Add your phone"
+
+        #Body
+        BoxLayout:
+            spacing:5
+            size_hint:[None, None]
+            width:LoginCard.width
+            height: 240
+            padding: [10,0,]
+
+            # phone input
+            BoxLayout:
+                orientation: 'horizontal'
+                padding:[5,0, 1,0]
+                pos_hint:{"center_x":0.5, "center_y":0.5}
+                id: phone_field
+                size_hint:[1, None]
+                height:40
+                canvas.before:
+                    Color:
+                        rgba: .5, .5, .5, 1
+                    Line:
+                        width: 1
+                        rectangle: self.x, self.y, self.width, self.height
+                canvas:
+                    Color:
+                        rgb: utils.get_color_from_hex("#dcd5de")
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+
+                #icon
+                BoxLayout:
+                    size_hint:[0.1, 0.90]
+                    canvas:
+                        Rectangle:
+                            source: "icons/phone.png"
+                            size: self.size
+                            pos: self.pos
+
+                TextInput:
+                    id: Phone_Input
+                    hint_text: "Phone"
+                    required: True
+                    multiline: False
+                    background_color: utils.get_color_from_hex("#dcd5de")
+                    background_normal: ''
+                    background_active: 'white.png'
+                    size_hint_y: 0.95
+                    padding: [10,self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 10,0]
+                    pos_hint:{"center_x":0.5, "center_y":0.5}
+        # Footer 
+        BoxLayout:
+            size_hint:[None, None]
+            width:LoginCard.width
+            height: 50
+            Button:
+                text: "Send OTP"
+                md_bg_color: utils.get_color_from_hex("#6610f2")
+                size_hint_x: 1
+                on_release:root.GetOTP()
+
+<VerifyOTPScreen>:
+    name: "VerifyOTP"
+
+    LoginCardLayer:
+        id: LoginCard
+        pos_hint:{"center_x":0.5, "center_y":0.5}
+        size_hint:[None, None]
+        width:400
+        height:340
+
+    BoxLayout:
+        orientation: 'vertical'
+        pos_hint:LoginCard.pos_hint
+        size_hint:LoginCard.size_hint
+        width:LoginCard.width
+        height:LoginCard.height
+
+        # Header
+        BoxLayout:
+            size_hint:[None, None]
+            width:LoginCard.width
+            height: 50
+            canvas:
+                Color:
+                    rgba: utils.get_color_from_hex("#6610f2")
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+            Label:
+                text:"Add recived OTP"
+
+        #Body
+        BoxLayout:
+            spacing:5
+            size_hint:[None, None]
+            width:LoginCard.width
+            height: 240
+            padding: [10,0,]
+
+            # otp input
+            BoxLayout:
+                orientation: 'horizontal'
+                padding:[5,0, 1,0]
+                pos_hint:{"center_x":0.5, "center_y":0.5}
+                id: otp_field
+                size_hint:[1, None]
+                height:40
+                canvas.before:
+                    Color:
+                        rgba: .5, .5, .5, 1
+                    Line:
+                        width: 1
+                        rectangle: self.x, self.y, self.width, self.height
+                canvas:
+                    Color:
+                        rgb: utils.get_color_from_hex("#dcd5de")
+                    Rectangle:
+                        size: self.size
+                        pos: self.pos
+
+                #icon
+                BoxLayout:
+                    size_hint:[0.1, 0.80]
+                    pos_hint:{"center_x":0.5, "center_y":0.5}
+                    canvas:
+                        Rectangle:
+                            source:"icons/key.png"
+                            size: self.size
+                            pos: self.pos
+
+                TextInput:
+                    id: OTP_Input
+                    hint_text: "OTP"
+                    required: True
+                    multiline: False
+                    background_color: utils.get_color_from_hex("#dcd5de")
+                    background_normal: ''
+                    background_active: 'white.png'
+                    size_hint_y: 0.95
+                    padding: [10,self.height / 2.0 - (self.line_height / 2.0) * len(self._lines), 10,0]
+                    pos_hint:{"center_x":0.5, "center_y":0.5}
+        # Footer 
+        BoxLayout:
+            size_hint:[None, None]
+            width:LoginCard.width
+            height: 50
+            Button:
+                text: "Verify"
+                md_bg_color: utils.get_color_from_hex("#6610f2")
+                size_hint_x: 1
+                on_release:root.VerifyOTP() 
+            
+
+
+<LoginCardLayer@BoxLayout>:
+    orientation: 'vertical'
+
+    FloatLayout:
+
+        canvas:
+            Color:
+                rgba: 0, 0, 0, 0.1
+            RoundedRectangle:
+                pos: self.pos
+                size: self.size
+                radius: [10, 10, 10, 10]
+
+        BoxLayout:
+            pos_hint:{"center_x":0.5, "center_y":0.5}
+            size_hint:[0.995, 0.985]
+            canvas:
+                Color:
+                    rgba: utils.get_color_from_hex("#FFFFFF")
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+                    radius: [10, 10, 10, 10]
+
+        
+        
+        
+
+
+
+
