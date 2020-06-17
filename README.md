@@ -67,7 +67,7 @@ firebase_config = {
 
 ```
 
-def GoToVerifyOTPScreen():
+def GoToVerifyOTPScreen(object, widget):
     App.get_running_app().sm.current= "VerifyOTP"
 
 
