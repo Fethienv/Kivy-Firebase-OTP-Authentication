@@ -122,20 +122,21 @@ class PhoneOTPAuthentication(object):
     cb1    = None
     modelv = None  
 
-    recaptcha_url     = "http://localhost:8080/modules/recaptcha.html" 
+    recaptcha_url     = "http://localhost:8080/phoneotpauthentication/recaptcha.html" 
 
-    def __init__(self, firebase_config, ChangeToVerifyOTPScreenCallback, LocalServer= True, recaptcha_url = None, SendOTP_url = None, VerifyOTP_url = None, 
-                 reload_every_time = None, SendOTPDoneCallback = None, SendOTPFailCallback = None, VerifyOTPDoneCallback = None, VerifyOTPFailCallback = None ):
+    def __init__(self, LocalServer= True, firebase_config = None, ChangeToVerifyOTPScreenCallback= None, recaptcha_url = None, SendOTP_url = None, VerifyOTP_url = None, 
+                 headers = "", reload_every_time = None, SendOTPDoneCallback = None, SendOTPFailCallback = None, VerifyOTPDoneCallback = None, VerifyOTPFailCallback = None ):
 
         self.firebase_config      = firebase_config  
         self.LocalServer          = LocalServer 
         self.reload_every_time    = reload_every_time
         self.ChangeToVerifyOTPScreenCallback = ChangeToVerifyOTPScreenCallback
 
-        self.SendOTPDoneCallback   = None 
-        self.SendOTPFailCallback   = None 
-        self.VerifyOTPDoneCallback = None 
-        self.VerifyOTPFailCallback = None
+        self.SendOTPDoneCallback   = SendOTPDoneCallback 
+        self.SendOTPFailCallback   = SendOTPFailCallback 
+        self.VerifyOTPDoneCallback = VerifyOTPDoneCallback 
+        self.VerifyOTPFailCallback = VerifyOTPFailCallback
+        self.headers               = headers
 
         self.SendOTP_url     = SendOTP_url 
         self.VerifyOTP_url   = VerifyOTP_url 
@@ -192,7 +193,7 @@ class PhoneOTPAuthentication(object):
                         if state:
                             #sleep()
                             if self.ChangeToVerifyOTPScreenCallback:
-                                self.ChangeToVerifyOTPScreenCallback()
+                                self.ChangeToVerifyOTPScreenCallback(self, btn)
                             else:
                                 App.get_running_app().sm.current= "VerifyOTP"
                             print("Screen changed")
@@ -271,12 +272,12 @@ class PhoneOTPAuthentication(object):
 
         url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/sendVerificationCode?key='+ self.firebase_config["apiKey"] if self.LocalServer else self.SendOTP_url
 
-        response = requests.post(url, json= post_data)
+        response = requests.post(url, json= post_data, headers=self.headers)
 
         if response.status_code == 200:
             #Ok
             if self.SendOTPDoneCallback:
-                self.SendOTPDoneCallback()
+                self.SendOTPDoneCallback(response)
             else:
                 requestsJar.set(name ='recaptcha_sessionInfo', value=response.json()['sessionInfo'], domain="localhost") 
                 print("Send OTP done") if self.LocalServer else print(response.text)
@@ -284,7 +285,7 @@ class PhoneOTPAuthentication(object):
         else:
             # Show error
             if self.SendOTPFailCallback:
-                self.SendOTPFailCallback()
+                self.SendOTPFailCallback(response)
             else:
                 print(response.text) 
                 return False
@@ -299,18 +300,18 @@ class PhoneOTPAuthentication(object):
         
         url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPhoneNumber?key='+ self.firebase_config["apiKey"] if self.LocalServer else self.VerifyOTP_url    
 
-        response = requests.post(url, json= post_data)                
+        response = requests.post(url, json= post_data, headers=self.headers)                
         if response.status_code == 200:
             #Ok
             if self.VerifyOTPDoneCallback:
-                self.VerifyOTPDoneCallback()
+                self.VerifyOTPDoneCallback(response)
             else:
                 print("OTP Correct") if self.LocalServer else print(response.text) 
                 return True
         else:
             # Show error
             if self.VerifyOTPFailCallback:
-                self.VerifyOTPFailCallback()
+                self.VerifyOTPFailCallback(response)
             else:
                 print(response.text) 
                 return False
