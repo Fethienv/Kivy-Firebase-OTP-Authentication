@@ -1,5 +1,5 @@
 # Kivy Firebase Phone OTP Authentication
-Use firebase otp phone authentication with kivy
+Use firebase otp phone authentication with kivy [![PyPI pyversions](https://img.shields.io/pypi/pyversions/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
 
 ### Exemple screenshots:
 
