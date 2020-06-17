@@ -26,7 +26,7 @@ firebase_config = {
                     "storageBucket"       : "",
                     "messagingSenderId"   : "",
                     "appId"               : "",
-                    "measurementId"       : ",
+                    "measurementId"       : "",
                 }
 
 
