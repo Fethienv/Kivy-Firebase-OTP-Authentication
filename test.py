@@ -13,20 +13,20 @@ from kivy.uix.screenmanager import Screen
 from kivy.properties import BooleanProperty
 from kivy.core.window import Window
 
-from modules.cefpython import cefpython, cefpython_initialize
+from phoneotpauthentication.cefpython import cefpython, cefpython_initialize
 
-from modules.phoneotpauthentication import PhoneOTPAuthentication
+from phoneotpauthentication import PhoneOTPAuthentication
 
 
 firebase_config = {
-                    "apiKey"              : "AIzaSyDdT5CKe4ISB91z7R4uWuREoMVWhtBzfgI",
-                    "authDomain"          : "sahari-18615.firebaseapp.com",
-                    "databaseURL"         : "https://sahari-18615.firebaseio.com",
-                    "projectId"           : "sahari-18615",
-                    "storageBucket"       : "sahari-18615.appspot.com",
-                    "messagingSenderId"   : "576094375251",
-                    "appId"               : "1:576094375251:web:0a8508470c41ab3e7965a6",
-                    "measurementId"       : "G-YVDG2TW324",
+                    "apiKey"              : "",
+                    "authDomain"          : "",
+                    "databaseURL"         : "",
+                    "projectId"           : "",
+                    "storageBucket"       : "",
+                    "messagingSenderId"   : "",
+                    "appId"               : "",
+                    "measurementId"       : ",
                 }
 
 
