@@ -1,0 +1,12 @@
+Cython
+docutils
+pygments
+pypiwin32
+kivy_deps.sdl2
+kivy_deps.glew
+kivy_deps.gstreamer
+kivy_deps.angle
+kivy
+cefpython3
+bs4
+psutil
