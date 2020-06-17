@@ -89,12 +89,13 @@ OTPAuthentication = PhoneOTPAuthentication(
 
 Argument | value
 ------------ | -------------
-firebase_config |  dict of firebase configuration
-ChangeToVerifyOTPScreenCallback |  your defined change screen function
 LocalServer  |  True or false, for use local or your own server
+ChangeToVerifyOTPScreenCallback |  your defined change screen function
+firebase_config |  dict of firebase configuration if you use your own server let it
 recaptcha_url |  url to html file to load recaptch verifier (clone this [file!](https://github.com/Fethienv/Kivy-Firebase-OTP-Authentication/blob/master/phoneotpauthentication/recaptcha.html) to your server)
 SendOTP_url   |  url for post phone and recaptcha token to your server than to firebase from you server
 VerifyOTP_url |  url for post otp and sessionInfo to your server than to firebase from you server
+headers | request post headers
 reload_every_time |  True or False, for reload recaptcha page every time click send otp
 SendOTPDoneCallback |  your defined function to run some code when send otp done
 SendOTPFailCallback |  your defined function to run some code when send otp fail
