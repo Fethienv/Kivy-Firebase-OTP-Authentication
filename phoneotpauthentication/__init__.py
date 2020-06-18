@@ -72,7 +72,7 @@ class FireServer:
    
     
 FireServer = FireServer() 
-class OverPopup(ModalView):
+class RecaptchaOverPopup(ModalView):
 
     donebtn        = None
     dialog_size    = (390, 180)
@@ -80,7 +80,7 @@ class OverPopup(ModalView):
     donebtn_size   = (383,50)
 
     def __init__(self, LocalServer, *largs, **kwargs):
-        super(OverPopup, self).__init__(**kwargs)
+        super(RecaptchaOverPopup, self).__init__(**kwargs)
         self.cb1 = None
         self.LocalServer = LocalServer
         
@@ -190,18 +190,23 @@ class PhoneOTPAuthentication(object):
 
                     def VerifyOTPScreen(btn):
                         state = self.SendOTP()
-                        if state:
+                        if state["results"]:
                             #sleep()
                             if self.ChangeToVerifyOTPScreenCallback:
-                                self.ChangeToVerifyOTPScreenCallback(self, btn)
+                                return self.ChangeToVerifyOTPScreenCallback(self, btn)
                             else:
                                 App.get_running_app().sm.current= "VerifyOTP"
+                                return state
+
                             print("Screen changed")
                         else:
                             self.modelv = None
-                            self.OverPopup.dismiss() 
+                            self.OverPopup.dismiss()
+                            return state
 
+                    print("Recaptchatoken_handler: recaptcha_token", value)
                     requestsJar.set(name ='recaptcha_token', value=value, domain="localhost")
+
                     modelv.donebtn.bind(text=donebtn_text)
                     modelv.donebtn.bind(on_release=VerifyOTPScreen)
                     donebtn_visibility('hidden')
@@ -250,9 +255,11 @@ class PhoneOTPAuthentication(object):
 
         return self.modelv    
 
-    def GetOTP(self, phoneNumber):
-        self.phoneNumber = phoneNumber
-        self.OverPopup = self.create_recaptcha_on(OverPopup(LocalServer = True))
+    def GetOTP(self, CountryPhoneCode, phone):
+        self.phoneNumber = phone
+        self.CountryPhoneCode = CountryPhoneCode
+        OverPopup_obj = RecaptchaOverPopup(LocalServer = self.LocalServer)
+        self.OverPopup = self.create_recaptcha_on(modelv = OverPopup_obj)
 
         # if you need reload cef every time can add remove self.modelv
         if self.reload_every_time:
@@ -266,29 +273,45 @@ class PhoneOTPAuthentication(object):
     # for your firebase security, In real app must use this code on server
     def SendOTP(self):
         recapchaToken   = requestsJar["recaptcha_token"]
-        post_data         = { "phoneNumber": "+"+str(self.phoneNumber),
+        print("SendOTP: recaptcha_token", recapchaToken)
+        post_data         = { "phoneNumber": "+" + str(self.CountryPhoneCode) + str(self.phoneNumber),
+                              "recaptchaToken": recapchaToken,
+                        }
+
+        if self.LocalServer:
+            url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/sendVerificationCode?key='+ self.firebase_config["apiKey"]  
+        
+        else:
+            url = self.SendOTP_url
+            post_data = { "phone":str(self.phoneNumber),
+                          "countryphonecode":str(self.CountryPhoneCode),
                           "recaptchaToken": recapchaToken,
                         }
 
-        url = 'https://www.googleapis.com/identitytoolkit/v3/relyingparty/sendVerificationCode?key='+ self.firebase_config["apiKey"] if self.LocalServer else self.SendOTP_url
-
         response = requests.post(url, json= post_data, headers=self.headers)
+
+        state ={}
 
         if response.status_code == 200:
             #Ok
+            state["results"] = True
             if self.SendOTPDoneCallback:
-                self.SendOTPDoneCallback(response)
+                state["message"] = self.SendOTPDoneCallback(response)
             else:
                 requestsJar.set(name ='recaptcha_sessionInfo', value=response.json()['sessionInfo'], domain="localhost") 
                 print("Send OTP done") if self.LocalServer else print(response.text)
-                return True
+                state["message"] = "Send OTP done"
+
+            return state
         else:
             # Show error
+            state["results"] = False
             if self.SendOTPFailCallback:
-                self.SendOTPFailCallback(response)
+                state["error"] = self.SendOTPFailCallback(response)
             else:
                 print(response.text) 
-                return False
+                state["error"] = response.text
+            return state
         
     # this function only for test
     # for your firebase security, In real app must use this code on server

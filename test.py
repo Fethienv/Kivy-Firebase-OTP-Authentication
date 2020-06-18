@@ -43,7 +43,7 @@ class SendOTPScreen(Screen):
     
     def GetOTP(self):
         phoneNumber = self.ids.Phone_Input.text
-        OTPAuthentication.GetOTP(phoneNumber)     
+        OTPAuthentication.GetOTP(CountryPhoneCode="", phone= phoneNumber)     
 
 class VerifyOTPScreen(Screen):
 
