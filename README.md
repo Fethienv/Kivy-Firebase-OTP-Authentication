@@ -1,5 +1,5 @@
 # Kivy Firebase Phone OTP Authentication
-Use firebase otp phone authentication with kivy
+Use firebase otp phone authentication to send sms with python kivy
 
 ### Exemple screenshots:
 
